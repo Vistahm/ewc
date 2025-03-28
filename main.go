@@ -232,6 +232,24 @@ func savePassword(ssid, password string) error {
 	return os.WriteFile("saved_networks.json", file, 0644)
 }
 
+func loadPassword(ssid string) (string, bool) {
+	data, err := os.ReadFile("saved_networks.json")
+	if err != nil {
+		return "", false
+	}
+
+	var saved_networks []SavedNetwork
+	json.Unmarshal(data, &saved_networks)
+
+	for _, network := range saved_networks {
+		if network.SSID == ssid {
+			return network.Password, true
+		}
+	}
+
+	return "", false
+}
+
 func turnOnWifi() error {
 	cmd := exec.Command("nmcli", "radio", "wifi", "on")
 	output, err := cmd.CombinedOutput()
@@ -352,33 +370,42 @@ func main() {
 		Options(ssidOptions...).
 		Value(&selectedAP)
 
-	// 2. input password
-	var password string
-	passwordForm := huh.NewInput().
-		Title("Enter password").
-		Prompt("Password: ").
-		EchoMode(huh.EchoModePassword).
-		Value(&password)
-
-	form := huh.NewForm(
-		huh.NewGroup(selectForm),
-	)
-
-	err = form.Run()
+	err = selectForm.Run()
 	if err != nil {
-		fmt.Println("Error with form:", err)
+		fmt.Println("error with form:", err)
 		os.Exit(1)
 	}
 
+	// load saved password for the selected ssid
+	var password string
+	savedPassword, found := loadPassword(selectedAP.SSID)
+
 	if (selectedAP.Flags & 0x1) > 0 {
-		form = huh.NewForm(
-			huh.NewGroup(passwordForm),
-		)
-		err = form.Run()
-		if err != nil {
-			fmt.Println("Error with password form:", err)
-			os.Exit(1)
+		if found {
+			// if saved password is found, skip the password prompt
+			password = savedPassword
+			fmt.Println("Using saved password for:", selectedAP.SSID)
+		} else {
+			// if no password saved, prompt the user
+			var passwordInput string
+			passwordForm := huh.NewInput().
+				Title("Enter password:").
+				EchoMode(huh.EchoModePassword).
+				Value(&passwordInput)
+
+			form := huh.NewForm(
+				huh.NewGroup(passwordForm),
+			)
+			err = form.Run()
+			if err != nil {
+				fmt.Println("Error with password form:", err)
+				os.Exit(1)
+			}
+
+			password = passwordInput
 		}
+	} else {
+		fmt.Println("No password required for this network.")
 	}
 
 	settings := createConnectionSettings(selectedAP, password)
@@ -400,6 +427,13 @@ func main() {
 
 	if connected {
 		fmt.Printf("Successfully connected to: %s\n", selectedAP.SSID)
+
+		// Save the password for ssid
+		if password != "" {
+			if err := savePassword(selectedAP.SSID, password); err != nil {
+				fmt.Println("failed to save password:", err)
+			}
+		}
 	} else {
 		fmt.Println("Failed to connect to the network. Please check your password.")
 		os.Exit(1)
