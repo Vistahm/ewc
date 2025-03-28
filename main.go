@@ -116,7 +116,6 @@ func createConnectionSettings(ap AccessPoint, password string) map[string]map[st
 			"ssid":     dbus.MakeVariant([]byte(ap.SSID)),
 			"security": dbus.MakeVariant("802-11-wireless-security"),
 		},
-		"802-11-wireless-security": {},
 		"connection": {
 			"id":          dbus.MakeVariant(ap.SSID),
 			"type":        dbus.MakeVariant("802-11-wireless"),
@@ -132,8 +131,13 @@ func createConnectionSettings(ap AccessPoint, password string) map[string]map[st
 
 	// Add password if needed
 	if (ap.Flags & 0x1) > 0 {
-		settings["802-11-wireless-security"]["key-mgmt"] = dbus.MakeVariant("wpa-psk")
-		settings["802-11-wireless-security"]["psk"] = dbus.MakeVariant(password)
+		settings["802-11-wireless-security"] = map[string]dbus.Variant{
+			"key-mgmt": dbus.MakeVariant("wpa-psk"),
+			"psk":      dbus.MakeVariant(password),
+		}
+	} else {
+		// If the network is not encrypted, don't include security settings
+		// No additional settings needer here
 	}
 
 	return settings
