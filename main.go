@@ -218,7 +218,11 @@ func savePassword(ssid, password string) error {
 	for i, network := range savedNetworks {
 		if network.SSID == ssid {
 			savedNetworks[i].Password = password
-			break
+			file, err := json.MarshalIndent(savedNetworks, "", " ")
+			if err != nil {
+				return err
+			}
+			return os.WriteFile("saved_networks.json", file, 0644)
 		}
 	}
 
