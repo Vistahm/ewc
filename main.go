@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -17,6 +18,11 @@ type AccessPoint struct {
 	SSID     string
 	Strength uint8
 	Flags    uint32
+}
+
+type SavedNetwork struct {
+	SSID     string `json:"ssid"`
+	Password string `json:"password"`
 }
 
 func getWifiDevicePath(conn *dbus.Conn) (dbus.ObjectPath, error) {
@@ -199,6 +205,31 @@ func forceWifiScan(conn *dbus.Conn, wifiDevicePath dbus.ObjectPath) error {
 	options := map[string]dbus.Variant{}
 	err := deviceObj.Call("org.freedesktop.NetworkManager.Device.Wireless.RequestScan", 0, options).Store()
 	return err
+}
+
+func savePassword(ssid, password string) error {
+	var savedNetworks []SavedNetwork
+
+	data, err := os.ReadFile("saved_networks.json")
+	if err == nil {
+		json.Unmarshal(data, &savedNetworks)
+	}
+
+	for i, network := range savedNetworks {
+		if network.SSID == ssid {
+			savedNetworks[i].Password = password
+			break
+		}
+	}
+
+	savedNetworks = append(savedNetworks, SavedNetwork{SSID: ssid, Password: password})
+
+	file, err := json.MarshalIndent(savedNetworks, "", " ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile("saved_networks.json", file, 0644)
 }
 
 func turnOnWifi() error {
