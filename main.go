@@ -179,7 +179,7 @@ func checkConnectionState(conn *dbus.Conn, activeConnectionPath dbus.ObjectPath)
 		return false, fmt.Errorf("failed to get connection state: %w", err)
 	}
 
-	if state == 1 {
+	if state == 1 || state == 2 {
 		return true, nil
 	}
 
