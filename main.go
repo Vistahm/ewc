@@ -13,6 +13,10 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
+const (
+	savedNetworksFile = ".saved_networks.json"
+)
+
 type AccessPoint struct {
 	Path     dbus.ObjectPath
 	SSID     string
@@ -210,7 +214,7 @@ func forceWifiScan(conn *dbus.Conn, wifiDevicePath dbus.ObjectPath) error {
 func savePassword(ssid, password string) error {
 	var savedNetworks []SavedNetwork
 
-	data, err := os.ReadFile("saved_networks.json")
+	data, err := os.ReadFile(savedNetworksFile)
 	if err == nil {
 		json.Unmarshal(data, &savedNetworks)
 	}
@@ -222,7 +226,7 @@ func savePassword(ssid, password string) error {
 			if err != nil {
 				return err
 			}
-			return os.WriteFile("saved_networks.json", file, 0644)
+			return os.WriteFile(savedNetworksFile, file, 0644)
 		}
 	}
 
@@ -233,11 +237,11 @@ func savePassword(ssid, password string) error {
 		return err
 	}
 
-	return os.WriteFile("saved_networks.json", file, 0644)
+	return os.WriteFile(savedNetworksFile, file, 0644)
 }
 
 func loadPassword(ssid string) (string, bool) {
-	data, err := os.ReadFile("saved_networks.json")
+	data, err := os.ReadFile(savedNetworksFile)
 	if err != nil {
 		return "", false
 	}

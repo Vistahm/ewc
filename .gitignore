@@ -1,4 +1,4 @@
 go.mod
 go.sum
-./bin/ewc
-saved_networks.json
+./bin
+.saved_networks.json
