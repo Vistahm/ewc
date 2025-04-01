@@ -34,6 +34,15 @@ cd ewc
  You can also move the executable file to your `/usr/local/bin` directory to use it globally on you machine.
  `mv ./ewc /usr/local/bin`
 
+## Dependencies
+
+This project requires the following Go libraries:
+
+- [huh?](https://github.com/charmbracelet/huh) - For the user interface.
+- [godbus/dbus](https://github.com/godbus/dbus) - For D-Bus communication.
+
+When you build the project, Go will automatically download and install these dependencies for you.
+
 ## Contributing
 This program is still under some development. There can be found some potentially bugs. If you encounter any problem feel free to open an issue under this repository.
 
