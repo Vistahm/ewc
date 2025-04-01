@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
+
+	"slices"
 
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/huh/spinner"
 	"github.com/godbus/dbus/v5"
-	"slices"
 )
 
-const (
-	savedNetworksFile = ".saved_networks.json"
-)
+var savedNetworksFile = getConfigFilePath()
 
 type AccessPoint struct {
 	Path     dbus.ObjectPath
@@ -308,6 +308,15 @@ func forgetNetwork(ssid string) error {
 	}
 
 	return os.WriteFile(savedNetworksFile, file, 0644)
+}
+
+func getConfigFilePath() string {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic("Unable to find the home directory")
+	}
+
+	return filepath.Join(homeDir, ".saved_networks.json")
 }
 
 func showHelpMessage() {
