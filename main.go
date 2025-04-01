@@ -313,9 +313,10 @@ func forgetNetwork(ssid string) error {
 func showHelpMessage() {
 	fmt.Println("Usage: ewc | ewc [Option]")
 	fmt.Println("Options:")
-	fmt.Println(" on   turns on the wifi")
-	fmt.Println(" off  turns off the wifi")
-	fmt.Println(" help shows this message")
+	fmt.Println(" on:  turns on the wifi")
+	fmt.Println(" off:  turns off the wifi")
+	fmt.Println(" forget <SSID>:  forgets the provided SSID")
+	fmt.Println(" help:  shows this message")
 }
 
 func main() {
