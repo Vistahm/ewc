@@ -288,11 +288,17 @@ func forgetNetwork(ssid string) error {
 	json.Unmarshal(data, &savedNetworks)
 
 	// remove the network
+	found := false
 	for i, network := range savedNetworks {
 		if network.SSID == ssid {
 			savedNetworks = slices.Delete(savedNetworks, i, i+1)
+			found = true
 			break
 		}
+	}
+
+	if !found {
+		return fmt.Errorf("SSID '%s' not found.", ssid)
 	}
 
 	// save back to file
