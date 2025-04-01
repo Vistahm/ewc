@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"slices"
 	"time"
 
 	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/huh/spinner"
 	"github.com/godbus/dbus/v5"
+	"slices"
 )
 
 const (
@@ -278,8 +278,34 @@ func turnOffWifi() error {
 	return nil
 }
 
+func forgetNetwork(ssid string) error {
+	data, err := os.ReadFile(savedNetworksFile)
+	if err != nil {
+		return err
+	}
+
+	var savedNetworks []SavedNetwork
+	json.Unmarshal(data, &savedNetworks)
+
+	// remove the network
+	for i, network := range savedNetworks {
+		if network.SSID == ssid {
+			savedNetworks = slices.Delete(savedNetworks, i, i+1)
+			break
+		}
+	}
+
+	// save back to file
+	file, err := json.MarshalIndent(savedNetworks, "", " ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(savedNetworksFile, file, 0644)
+}
+
 func showHelpMessage() {
-	fmt.Println("Usage: ewc [Option]")
+	fmt.Println("Usage: ewc | ewc [Option]")
 	fmt.Println("Options:")
 	fmt.Println(" on   turns on the wifi")
 	fmt.Println(" off  turns off the wifi")
@@ -296,21 +322,45 @@ func main() {
 
 	// Collect args for turning on and off the wifi
 	args := os.Args[1:]
+
 	if !slices.Equal(args, nil) {
-		if args[0] == "on" {
+		switch args[0] {
+		case "on":
 			if err := turnOnWifi(); err != nil {
 				fmt.Println(err)
+			} else {
+				fmt.Println("Wi-Fi Enabled.")
 			}
-			fmt.Println("Wi-Fi Enabled.")
 			os.Exit(0)
-		} else if args[0] == "off" {
+
+		case "off":
 			if err := turnOffWifi(); err != nil {
 				fmt.Println(err)
+			} else {
+				fmt.Println("Wi-Fi Disabled.")
 			}
-			fmt.Println("Wi-Fi Disabled.")
 			os.Exit(0)
-		} else if args[0] == "help" {
+
+		case "forget":
+			if len(args) < 2 {
+				fmt.Println("Please provide an SSID to forget.")
+				os.Exit(1)
+			}
+
+			ssidToForget := args[1]
+			if err := forgetNetwork(ssidToForget); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Printf("Success.\nForgotten network: %s\n", ssidToForget)
+			}
+			os.Exit(0)
+
+		case "help":
 			showHelpMessage()
+			os.Exit(0)
+
+		default:
+			fmt.Println("Unknown command. Use 'help' for a list of commands.")
 			os.Exit(0)
 		}
 	}
