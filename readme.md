@@ -26,7 +26,7 @@ cd ewc
 
 2. **Build the program:**
  (Make sure you have Go installed) Run:
- `go build -o ewc main.go`
+ `go build -o ewc *.go`
 
 3. **Run the program:**
  `./ewc`
