@@ -6,6 +6,7 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
+// Creates a d-bus object and activates a connection
 func connectToNetwork(conn *dbus.Conn, settings map[string]map[string]dbus.Variant, wifiDevicePath dbus.ObjectPath, apPath dbus.ObjectPath) (dbus.ObjectPath, error) {
 	obj := conn.Object("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager")
 
@@ -18,6 +19,7 @@ func connectToNetwork(conn *dbus.Conn, settings map[string]map[string]dbus.Varia
 	return activeConnectionPath, nil
 }
 
+// Checks to see if the connection attempt was successful or not
 func checkConnectionState(conn *dbus.Conn, activeConnectionPath dbus.ObjectPath) (bool, error) {
 	activeConnectionObj := conn.Object("org.freedesktop.NetworkManager", activeConnectionPath)
 

@@ -10,6 +10,16 @@ So here it is! A program that helps you to control you wireless connection on yo
 
 It looks cool (uses `huh?` library from charmbracelet), it's easy to use and it is fast enough.
 
+## Examples
+Connecting and forgetting:
+
+![001](https://github.com/user-attachments/assets/fbbbc235-333e-4aba-9e47-50f48b8db108)
+
+Turning wifi on/off:
+
+![002](https://github.com/user-attachments/assets/d7741139-8daf-42c9-970e-18ff198dca96)
+
+
 ## Features
 - **Connect and Switch between Wi-Fi networks:** easily connect the available Wi-Fi networks with a simple and interactive interface
 - **Save Passwords:** The program is able to save the passwords of each access point so you don't have to re-enter them every time.

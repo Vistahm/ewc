@@ -11,6 +11,7 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
+// Prints out the help message for the help argument
 func showHelpMessage() {
 	fmt.Println("Usage: ewc | ewc [Option]")
 	fmt.Println("Options:")
@@ -20,6 +21,7 @@ func showHelpMessage() {
 	fmt.Println(" help:  shows this message")
 }
 
+// Handles the error as a helper function
 func handleError(err error, message string) {
 	if err != nil {
 		fmt.Printf("%s: %s\n", err, message)
@@ -27,6 +29,7 @@ func handleError(err error, message string) {
 	}
 }
 
+// Waits for scanning the nerby networks based on the given timeoutSeconds
 func waitForScan(timeoutSeconds int) {
 	action := func() {
 		time.Sleep(time.Duration(timeoutSeconds) * time.Second)
@@ -36,6 +39,7 @@ func waitForScan(timeoutSeconds int) {
 	}
 }
 
+// Waits to establish connection based on the given timeoutSeconds
 func waitForConnection(timeoutSeconds int) {
 	action := func() {
 		time.Sleep(time.Duration(timeoutSeconds) * time.Second)
@@ -45,6 +49,7 @@ func waitForConnection(timeoutSeconds int) {
 	}
 }
 
+// Handles the command-line arguments
 func handleArguments(args []string) {
 
 	if !slices.Equal(args, nil) {
@@ -90,6 +95,7 @@ func handleArguments(args []string) {
 	}
 }
 
+// Checks the system's NetworkManager state
 func getNetworkManagerState(obj dbus.BusObject) error {
 	var state uint32
 	err := obj.Call("org.freedesktop.NetworkManager.state", 0).Store(&state)
@@ -119,6 +125,7 @@ func getNetworkManagerState(obj dbus.BusObject) error {
 	return nil
 }
 
+// Creates a huh form to accept an access point from user
 func selectAccessPoint(accessPoints []AccessPoint) AccessPoint {
 	var selectedAP AccessPoint
 	var ssidOptions []huh.Option[AccessPoint]
@@ -136,6 +143,7 @@ func selectAccessPoint(accessPoints []AccessPoint) AccessPoint {
 	return selectedAP
 }
 
+// If a saved password was found for the selectedAP it will load it, otherwise it will prompt the user for a password. Also if the the access point is not protected with WPA/WPA2, ignore the password prompt.
 func getPasswordForAccessPoint(selectedAP AccessPoint) string {
 	var password string
 	savedPassword, found := loadPassword(selectedAP.SSID)
@@ -154,6 +162,7 @@ func getPasswordForAccessPoint(selectedAP AccessPoint) string {
 	return password
 }
 
+// Creates a huh form to accept password for the selected ssid
 func promptForPassword() string {
 	var passwordInput string
 	passwordForm := huh.NewInput().

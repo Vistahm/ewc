@@ -9,6 +9,7 @@ import (
 	"slices"
 )
 
+// Saves the password of the ssid if the connection was successful
 func savePassword(ssid, password string) error {
 	var savedNetworks []SavedNetwork
 
@@ -38,6 +39,7 @@ func savePassword(ssid, password string) error {
 	return os.WriteFile(savedNetworksFile, file, 0644)
 }
 
+// Loads the password of ssid
 func loadPassword(ssid string) (string, bool) {
 	data, err := os.ReadFile(savedNetworksFile)
 	if err != nil {
@@ -56,6 +58,7 @@ func loadPassword(ssid string) (string, bool) {
 	return "", false
 }
 
+// Specifies the full path to save the json file in the user's home directory
 func getConfigFilePath() string {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -65,6 +68,7 @@ func getConfigFilePath() string {
 	return filepath.Join(homeDir, ".saved_networks.json")
 }
 
+// Forgets the network based on the ssid
 func forgetNetwork(ssid string) error {
 	data, err := os.ReadFile(savedNetworksFile)
 	if err != nil {
@@ -97,6 +101,7 @@ func forgetNetwork(ssid string) error {
 	return os.WriteFile(savedNetworksFile, file, 0644)
 }
 
+// Turns the system's wifi on
 func turnOnWifi() error {
 	cmd := exec.Command("nmcli", "radio", "wifi", "on")
 	output, err := cmd.CombinedOutput()
@@ -107,6 +112,7 @@ func turnOnWifi() error {
 	return nil
 }
 
+// Turns the system's wifi off
 func turnOffWifi() error {
 	cmd := exec.Command("nmcli", "radio", "wifi", "off")
 	output, err := cmd.CombinedOutput()
