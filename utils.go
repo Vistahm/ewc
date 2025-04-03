@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"slices"
 	"time"
 
+	"github.com/charmbracelet/huh"
 	"github.com/charmbracelet/huh/spinner"
+	"github.com/godbus/dbus/v5"
 )
 
 func showHelpMessage() {
@@ -14,6 +18,13 @@ func showHelpMessage() {
 	fmt.Println(" off:  turns off the wifi")
 	fmt.Println(" forget <SSID>:  forgets the provided SSID")
 	fmt.Println(" help:  shows this message")
+}
+
+func handleError(err error, message string) {
+	if err != nil {
+		fmt.Printf("%s: %s\n", err, message)
+		os.Exit(1)
+	}
 }
 
 func waitForScan(timeoutSeconds int) {
@@ -32,4 +43,125 @@ func waitForConnection(timeoutSeconds int) {
 	if err := spinner.New().Title("Establishing connection...").Action(action).Run(); err != nil {
 		fmt.Println("Spinner establish failed:", err)
 	}
+}
+
+func handleArguments(args []string) {
+
+	if !slices.Equal(args, nil) {
+		switch args[0] {
+		case "on":
+			if err := turnOnWifi(); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("Wi-Fi Enabled.")
+			}
+			os.Exit(0)
+
+		case "off":
+			if err := turnOffWifi(); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("Wi-Fi Disabled.")
+			}
+			os.Exit(0)
+
+		case "forget":
+			if len(args) < 2 {
+				fmt.Println("Please provide an SSID to forget.")
+				os.Exit(1)
+			}
+
+			ssidToForget := args[1]
+			if err := forgetNetwork(ssidToForget); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Printf("Success.\nForgotten network: %s\n", ssidToForget)
+			}
+			os.Exit(0)
+
+		case "help":
+			showHelpMessage()
+			os.Exit(0)
+
+		default:
+			fmt.Println("Unknown command. Use 'help' for a list of commands.")
+			os.Exit(0)
+		}
+	}
+}
+
+func getNetworkManagerState(obj dbus.BusObject) error {
+	var state uint32
+	err := obj.Call("org.freedesktop.NetworkManager.state", 0).Store(&state)
+	if err != nil {
+		return err
+	}
+
+	switch state {
+	case 70:
+		fmt.Println("NetworkManager is connected globally.")
+	case 60:
+		fmt.Println("NetworkManager is connected to a local Network.")
+	case 50:
+		fmt.Println("NetworkManager is connecting.")
+	case 40:
+		fmt.Println("NetworkManager is disconnected.")
+	case 20:
+		fmt.Println("NetworkManager is sleeping.")
+	case 10:
+		fmt.Println("NetworkManager is unavailable.")
+	case 0:
+		fmt.Println("NetworkManager's status is unknown.")
+	default:
+		fmt.Println("unknown NetworkManager state.")
+	}
+
+	return nil
+}
+
+func selectAccessPoint(accessPoints []AccessPoint) AccessPoint {
+	var selectedAP AccessPoint
+	var ssidOptions []huh.Option[AccessPoint]
+
+	for _, ap := range accessPoints {
+		ssidOptions = append(ssidOptions, huh.NewOption(fmt.Sprintf("%s (Strength: %d)", ap.SSID, ap.Strength), ap))
+	}
+
+	selectForm := huh.NewSelect[AccessPoint]().
+		Title("Select Wi-Fi Network").
+		Options(ssidOptions...).
+		Value(&selectedAP)
+
+	handleError(selectForm.Run(), "Error with form")
+	return selectedAP
+}
+
+func getPasswordForAccessPoint(selectedAP AccessPoint) string {
+	var password string
+	savedPassword, found := loadPassword(selectedAP.SSID)
+
+	if (selectedAP.Flags & 0x1) > 0 {
+		if found {
+			password = savedPassword
+			fmt.Println("Using saved password for:", selectedAP.SSID)
+		} else {
+			password = promptForPassword()
+		}
+	} else {
+		fmt.Println("No poassword required for this network.")
+	}
+
+	return password
+}
+
+func promptForPassword() string {
+	var passwordInput string
+	passwordForm := huh.NewInput().
+		Title("Enter password: ").
+		EchoMode(huh.EchoModePassword).
+		Value(&passwordInput)
+
+	form := huh.NewForm(huh.NewGroup(passwordForm))
+	handleError(form.Run(), "Error with password form")
+	return passwordInput
 }
