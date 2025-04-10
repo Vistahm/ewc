@@ -8,7 +8,7 @@ I don't know if there's already such a program that can help you to do so, I did
 
 So here it is! A program that helps you to control you wireless connection on your Linux machine.
 
-It looks cool (uses `huh?` library from charmbracelet), it's easy to use and it is fast enough.
+It looks cool (uses `huh?` library from [charmbracelet](https://github.com/charmbracelet)), it's easy to use and it is fast enough.
 
 ## Examples
 Connecting and forgetting:
