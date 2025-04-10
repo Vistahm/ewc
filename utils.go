@@ -165,12 +165,25 @@ func getPasswordForAccessPoint(selectedAP AccessPoint) string {
 // Creates a huh form to accept password for the selected ssid
 func promptForPassword() string {
 	var passwordInput string
-	passwordForm := huh.NewInput().
-		Title("Enter password: ").
-		EchoMode(huh.EchoModePassword).
-		Value(&passwordInput)
+	var showPassword bool
+	var passwordForm *huh.Input
 
-	form := huh.NewForm(huh.NewGroup(passwordForm))
-	handleError(form.Run(), "Error with password form")
+	showPasswordToggle := huh.NewConfirm().
+		Title("Show Password?").
+		Value(&showPassword).
+		Run()
+	if showPasswordToggle != nil {
+		fmt.Println("failed to showPasswordToggle")
+		os.Exit(1)
+	}
+
+	if showPassword {
+		passwordForm = huh.NewInput().Title("Enter Password:").EchoMode(huh.EchoModeNormal).Value(&passwordInput)
+	} else {
+		passwordForm = huh.NewInput().Title("Enter Password:").EchoMode(huh.EchoModePassword).Value(&passwordInput)
+	}
+
+	handleError(passwordForm.Run(), "failed to load form")
+
 	return passwordInput
 }
