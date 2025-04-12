@@ -28,6 +28,8 @@ Turning wifi on/off:
 - **Fast and Lightweight:** It is fast enough to not waste your time; if you don't believe you can give it a shot!
 
 ## Installation
+### Manual
+
 1. **Clone the repository:**
 ```
 git clone https://github.com/Vistahm/ewc.git
@@ -36,13 +38,24 @@ cd ewc
 
 2. **Build the program:**
  (Make sure you have Go installed) Run:
- `go build -o ewc *.go`
+```
+go build -o ewc *.go
+```
 
 3. **Run the program:**
  `./ewc`
 
  You can also move the executable file to your `/usr/local/bin` directory to use it globally on you machine.
- `mv ./ewc /usr/local/bin`
+```
+mv ./ewc /usr/local/bin
+```
+
+### Auto
+
+For auto installation just enter the following line in your terminal:
+```
+ bash -c "$(curl -sLo- https://gist.githubusercontent.com/Vistahm/9a0d968f1e20057e534559e8e016adc6/raw/376a2b507f80e515035ff278b44c78c67ecc19c6/install.sh)"
+```
 
 ## Dependencies
 
@@ -56,4 +69,4 @@ When you build the project, Go will automatically download and install these dep
 ## Contributing
 This program is still under some development. There can be found some potentially bugs. If you encounter any problem feel free to open an issue under this repository.
 
-Any Contributions are welcome!
+Any contributions are welcome!
