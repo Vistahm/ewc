@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ type SavedNetwork struct {
 	Password string `json:"password"`
 }
 
-func getWifiDevicePath(conn *dbus.Conn) (dbus.ObjectPath, error) {
+func GetWifiDevicePath(conn *dbus.Conn) (dbus.ObjectPath, error) {
 	obj := conn.Object("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager")
 
 	var devicePaths []dbus.ObjectPath
@@ -48,7 +48,7 @@ func getWifiDevicePath(conn *dbus.Conn) (dbus.ObjectPath, error) {
 	return "", fmt.Errorf("No wifi device found.")
 }
 
-func getAccessPoints(conn *dbus.Conn, wifiDevicePath dbus.ObjectPath) ([]AccessPoint, error) {
+func GetAccessPoints(conn *dbus.Conn, wifiDevicePath dbus.ObjectPath) ([]AccessPoint, error) {
 	wifiDeviceObj := conn.Object("org.freedesktop.NetworkManager", wifiDevicePath)
 
 	var accessPointsPaths []dbus.ObjectPath
@@ -108,7 +108,7 @@ func getAccessPoints(conn *dbus.Conn, wifiDevicePath dbus.ObjectPath) ([]AccessP
 	return accessPoints, nil
 }
 
-func createConnectionSettings(ap AccessPoint, password string) map[string]map[string]dbus.Variant {
+func CreateConnectionSettings(ap AccessPoint, password string) map[string]map[string]dbus.Variant {
 	settings := map[string]map[string]dbus.Variant{
 		"802-11-wireless": {
 			"mode":     dbus.MakeVariant("infrastructure"),

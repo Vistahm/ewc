@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 // Creates a d-bus object and activates a connection
-func connectToNetwork(conn *dbus.Conn, settings map[string]map[string]dbus.Variant, wifiDevicePath dbus.ObjectPath, apPath dbus.ObjectPath) (dbus.ObjectPath, error) {
+func ConnectToNetwork(conn *dbus.Conn, settings map[string]map[string]dbus.Variant, wifiDevicePath dbus.ObjectPath, apPath dbus.ObjectPath) (dbus.ObjectPath, error) {
 	obj := conn.Object("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager")
 
 	var newConnectionPath, activeConnectionPath dbus.ObjectPath
@@ -20,7 +20,7 @@ func connectToNetwork(conn *dbus.Conn, settings map[string]map[string]dbus.Varia
 }
 
 // Checks to see if the connection attempt was successful or not
-func checkConnectionState(conn *dbus.Conn, activeConnectionPath dbus.ObjectPath) (bool, error) {
+func CheckConnectionState(conn *dbus.Conn, activeConnectionPath dbus.ObjectPath) (bool, error) {
 	activeConnectionObj := conn.Object("org.freedesktop.NetworkManager", activeConnectionPath)
 
 	activeVariant, err := activeConnectionObj.GetProperty("org.freedesktop.NetworkManager.Connection.Active.State")
@@ -41,7 +41,7 @@ func checkConnectionState(conn *dbus.Conn, activeConnectionPath dbus.ObjectPath)
 	return false, nil
 }
 
-func forceWifiScan(conn *dbus.Conn, wifiDevicePath dbus.ObjectPath) error {
+func ForceWifiScan(conn *dbus.Conn, wifiDevicePath dbus.ObjectPath) error {
 	deviceObj := conn.Object("org.freedesktop.NetworkManager", wifiDevicePath)
 	options := map[string]dbus.Variant{}
 	err := deviceObj.Call("org.freedesktop.NetworkManager.Device.Wireless.RequestScan", 0, options).Store()

@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -9,8 +9,10 @@ import (
 	"slices"
 )
 
+var savedNetworksFile = GetConfigFilePath()
+
 // Saves the password of the ssid if the connection was successful
-func savePassword(ssid, password string) error {
+func SavePassword(ssid, password string) error {
 	var savedNetworks []SavedNetwork
 
 	data, err := os.ReadFile(savedNetworksFile)
@@ -40,7 +42,7 @@ func savePassword(ssid, password string) error {
 }
 
 // Loads the password of ssid
-func loadPassword(ssid string) (string, bool) {
+func LoadPassword(ssid string) (string, bool) {
 	data, err := os.ReadFile(savedNetworksFile)
 	if err != nil {
 		return "", false
@@ -59,7 +61,7 @@ func loadPassword(ssid string) (string, bool) {
 }
 
 // Specifies the full path to save the json file in the user's home directory
-func getConfigFilePath() string {
+func GetConfigFilePath() string {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic("Unable to find the home directory")
@@ -69,7 +71,7 @@ func getConfigFilePath() string {
 }
 
 // Forgets the network based on the ssid
-func forgetNetwork(ssid string) error {
+func ForgetNetwork(ssid string) error {
 	data, err := os.ReadFile(savedNetworksFile)
 	if err != nil {
 		return err
@@ -102,7 +104,7 @@ func forgetNetwork(ssid string) error {
 }
 
 // Turns the system's wifi on
-func turnOnWifi() error {
+func TurnOnWifi() error {
 	cmd := exec.Command("nmcli", "radio", "wifi", "on")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -113,7 +115,7 @@ func turnOnWifi() error {
 }
 
 // Turns the system's wifi off
-func turnOffWifi() error {
+func TurnOffWifi() error {
 	cmd := exec.Command("nmcli", "radio", "wifi", "off")
 	output, err := cmd.CombinedOutput()
 	if err != nil {

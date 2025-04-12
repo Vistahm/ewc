@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 )
 
 // Prints out the help message for the help argument
-func showHelpMessage() {
+func ShowHelpMessage() {
 	fmt.Println("Usage: ewc | ewc [Option]")
 	fmt.Println("Options:")
 	fmt.Println(" on:  turns on the wifi")
@@ -22,7 +22,7 @@ func showHelpMessage() {
 }
 
 // Handles the error as a helper function
-func handleError(err error, message string) {
+func HandleError(err error, message string) {
 	if err != nil {
 		fmt.Printf("%s: %s\n", err, message)
 		os.Exit(1)
@@ -30,7 +30,7 @@ func handleError(err error, message string) {
 }
 
 // Waits for scanning the nerby networks based on the given timeoutSeconds
-func waitForScan(timeoutSeconds int) {
+func WaitForScan(timeoutSeconds int) {
 	action := func() {
 		time.Sleep(time.Duration(timeoutSeconds) * time.Second)
 	}
@@ -40,7 +40,7 @@ func waitForScan(timeoutSeconds int) {
 }
 
 // Waits to establish connection based on the given timeoutSeconds
-func waitForConnection(timeoutSeconds int) {
+func WaitForConnection(timeoutSeconds int) {
 	action := func() {
 		time.Sleep(time.Duration(timeoutSeconds) * time.Second)
 	}
@@ -50,12 +50,12 @@ func waitForConnection(timeoutSeconds int) {
 }
 
 // Handles the command-line arguments
-func handleArguments(args []string) {
+func HandleArguments(args []string) {
 
 	if !slices.Equal(args, nil) {
 		switch args[0] {
 		case "on":
-			if err := turnOnWifi(); err != nil {
+			if err := TurnOnWifi(); err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Println("Wi-Fi Enabled.")
@@ -63,7 +63,7 @@ func handleArguments(args []string) {
 			os.Exit(0)
 
 		case "off":
-			if err := turnOffWifi(); err != nil {
+			if err := TurnOffWifi(); err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Println("Wi-Fi Disabled.")
@@ -77,7 +77,7 @@ func handleArguments(args []string) {
 			}
 
 			ssidToForget := args[1]
-			if err := forgetNetwork(ssidToForget); err != nil {
+			if err := ForgetNetwork(ssidToForget); err != nil {
 				fmt.Println(err)
 			} else {
 				fmt.Printf("Success.\nForgotten network: %s\n", ssidToForget)
@@ -85,7 +85,7 @@ func handleArguments(args []string) {
 			os.Exit(0)
 
 		case "help":
-			showHelpMessage()
+			ShowHelpMessage()
 			os.Exit(0)
 
 		default:
@@ -96,7 +96,7 @@ func handleArguments(args []string) {
 }
 
 // Checks the system's NetworkManager state
-func getNetworkManagerState(obj dbus.BusObject) error {
+func GetNetworkManagerState(obj dbus.BusObject) error {
 	var state uint32
 	err := obj.Call("org.freedesktop.NetworkManager.state", 0).Store(&state)
 	if err != nil {
@@ -126,7 +126,7 @@ func getNetworkManagerState(obj dbus.BusObject) error {
 }
 
 // Creates a huh form to accept an access point from user
-func selectAccessPoint(accessPoints []AccessPoint) AccessPoint {
+func SelectAccessPoint(accessPoints []AccessPoint) AccessPoint {
 	var selectedAP AccessPoint
 	var ssidOptions []huh.Option[AccessPoint]
 
@@ -139,21 +139,21 @@ func selectAccessPoint(accessPoints []AccessPoint) AccessPoint {
 		Options(ssidOptions...).
 		Value(&selectedAP)
 
-	handleError(selectForm.Run(), "Error with form")
+	HandleError(selectForm.Run(), "Error with form")
 	return selectedAP
 }
 
 // If a saved password was found for the selectedAP it will load it, otherwise it will prompt the user for a password. Also if the the access point is not protected with WPA/WPA2, ignore the password prompt.
-func getPasswordForAccessPoint(selectedAP AccessPoint) string {
+func GetPasswordForAccessPoint(selectedAP AccessPoint) string {
 	var password string
-	savedPassword, found := loadPassword(selectedAP.SSID)
+	savedPassword, found := LoadPassword(selectedAP.SSID)
 
 	if (selectedAP.Flags & 0x1) > 0 {
 		if found {
 			password = savedPassword
 			fmt.Println("Using saved password for:", selectedAP.SSID)
 		} else {
-			password = promptForPassword()
+			password = PromptForPassword()
 		}
 	} else {
 		fmt.Println("No poassword required for this network.")
@@ -163,7 +163,7 @@ func getPasswordForAccessPoint(selectedAP AccessPoint) string {
 }
 
 // Creates a huh form to accept password for the selected ssid
-func promptForPassword() string {
+func PromptForPassword() string {
 	var passwordInput string
 	var showPassword bool
 	var passwordForm *huh.Input
@@ -183,7 +183,7 @@ func promptForPassword() string {
 		passwordForm = huh.NewInput().Title("Enter Password:").EchoMode(huh.EchoModePassword).Value(&passwordInput)
 	}
 
-	handleError(passwordForm.Run(), "failed to load form")
+	HandleError(passwordForm.Run(), "failed to load form")
 
 	return passwordInput
 }
