@@ -28,7 +28,7 @@ Turning wifi on/off:
 - **Fast and Lightweight:** It is fast enough to not waste your time; if you don't believe you can give it a shot!
 
 ## Installation
-### Manual
+### Manual (recommended)
 
 1. **Clone the repository:**
 ```
@@ -54,7 +54,7 @@ mv ./ewc /usr/local/bin
 
 For auto installation just enter the following line in your terminal:
 ```
- bash -c "$(curl -sLo- https://gist.githubusercontent.com/Vistahm/9a0d968f1e20057e534559e8e016adc6/raw/376a2b507f80e515035ff278b44c78c67ecc19c6/install.sh)"
+bash -c "$(curl -sLo- https://gist.githubusercontent.com/Vistahm/9a0d968f1e20057e534559e8e016adc6/raw/8766da4ffe7ef9c58733716319f865e69007a428/install.sh)"
 ```
 
 ## Dependencies
