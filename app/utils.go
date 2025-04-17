@@ -11,13 +11,20 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
+// ANSI escape color codes
+var Reset = "\033[0m"
+var Orange = "\033[38;5;208m"
+var Yellow = "\033[33m"
+var Cyan = "\033[36m"
+
 // Prints out the help message for the help argument
 func ShowHelpMessage() {
 	fmt.Println("Usage: ewc | ewc [Option]")
 	fmt.Println("Options:")
+	fmt.Println(" con <SSID>:  directly connects to SSID without scanning")
+	fmt.Println(" forget <SSID>:  forgets the provided SSID")
 	fmt.Println(" on:  turns on the wifi")
 	fmt.Println(" off:  turns off the wifi")
-	fmt.Println(" forget <SSID>:  forgets the provided SSID")
 	fmt.Println(" help:  shows this message")
 }
 
@@ -54,6 +61,30 @@ func HandleArguments(args []string) {
 
 	if !slices.Equal(args, nil) {
 		switch args[0] {
+		case "con":
+			if len(args) < 2 {
+				fmt.Println("Please provide a SSID to connect.")
+				os.Exit(1)
+			}
+
+			ssidToConnect := args[1]
+			ConnectToSSID(ssidToConnect)
+			os.Exit(0)
+
+		case "forget":
+			if len(args) < 2 {
+				fmt.Println("Please provide a SSID to forget.")
+				os.Exit(1)
+			}
+
+			ssidToForget := args[1]
+			if err := ForgetNetwork(ssidToForget); err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Printf("Success.\nForgotten network: %s\n", ssidToForget)
+			}
+			os.Exit(0)
+
 		case "on":
 			if err := TurnOnWifi(); err != nil {
 				fmt.Println(err)
@@ -67,20 +98,6 @@ func HandleArguments(args []string) {
 				fmt.Println(err)
 			} else {
 				fmt.Println("Wi-Fi Disabled.")
-			}
-			os.Exit(0)
-
-		case "forget":
-			if len(args) < 2 {
-				fmt.Println("Please provide an SSID to forget.")
-				os.Exit(1)
-			}
-
-			ssidToForget := args[1]
-			if err := ForgetNetwork(ssidToForget); err != nil {
-				fmt.Println(err)
-			} else {
-				fmt.Printf("Success.\nForgotten network: %s\n", ssidToForget)
 			}
 			os.Exit(0)
 
@@ -156,7 +173,7 @@ func GetPasswordForAccessPoint(selectedAP AccessPoint) string {
 			password = PromptForPassword()
 		}
 	} else {
-		fmt.Println("No poassword required for this network.")
+		fmt.Println("The selected network is not encrypted.")
 	}
 
 	return password
