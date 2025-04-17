@@ -2,6 +2,8 @@ package app
 
 import (
 	"fmt"
+	"os"
+	"time"
 
 	"github.com/godbus/dbus/v5"
 )
@@ -120,6 +122,10 @@ func CreateConnectionSettings(ap AccessPoint, password string) map[string]map[st
 			"type":        dbus.MakeVariant("802-11-wireless"),
 			"autoconnect": dbus.MakeVariant(true),
 		},
+		"802-11-wireless-security": {
+			"key-mgmt": dbus.MakeVariant("wpa-psk"),
+			"psk":      dbus.MakeVariant(password),
+		},
 		"ipv4": {
 			"method": dbus.MakeVariant("auto"),
 		},
@@ -129,15 +135,102 @@ func CreateConnectionSettings(ap AccessPoint, password string) map[string]map[st
 	}
 
 	// Add password if needed
-	if (ap.Flags & 0x1) > 0 {
-		settings["802-11-wireless-security"] = map[string]dbus.Variant{
-			"key-mgmt": dbus.MakeVariant("wpa-psk"),
-			"psk":      dbus.MakeVariant(password),
-		}
-	} else {
-		// If the network is not encrypted, don't include security settings
-		// No additional settings needer here
+	//if ap.Flags == 0 || (ap.Flags&0x1) > 0 {
+	//	settings["802-11-wireless-security"] = map[string]dbus.Variant{
+	//		"key-mgmt": dbus.MakeVariant("wpa-psk"),
+	//		"psk":      dbus.MakeVariant(password),
+	//	}
+	//} else {
+	//	// If the network is not encrypted, don't include security settings
+	//	// No additional settings needer here
+	//}
+
+	// remove security settings if the network is unencrypted
+	if password == "" {
+		delete(settings, "802-11-wireless-security")
+		wirelessSettings := settings["802-11-wireless"]
+		delete(wirelessSettings, "security")
+		settings["802-11-wireless"] = wirelessSettings
 	}
 
 	return settings
+}
+
+func ConnectToSSID(ssid string) {
+	// print the hint
+	fmt.Println(Yellow+"   You're using direct connection and the program doesn't scan your nearby networks.", "\n",
+		"   So you should be aware of the SSID that you're trying to connect to."+Reset+"\n")
+
+	conn, err := dbus.SystemBus()
+	HandleError(err, "SystemBus failed (ConnectToSSID)")
+
+	wifiDevicePath, err := GetWifiDevicePath(conn)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// laod saved password
+	password, found := LoadPassword(ssid)
+
+	var settings map[string]map[string]dbus.Variant
+	if found {
+		// Load password if already saved
+		fmt.Println("Using saved password for:", ssid)
+		ap := AccessPoint{SSID: ssid}
+		settings = CreateConnectionSettings(ap, password)
+	} else {
+		// Prompt the user for password if not found
+		password = PromptForPassword()
+		ap := AccessPoint{SSID: ssid}
+		settings = CreateConnectionSettings(ap, password)
+	}
+
+	// if no password entered, treat the network as unencrypted
+	if password == "" {
+		fmt.Println(Cyan + "No password entered. The selected network will be treated as unencrypted." + Reset)
+		ap := AccessPoint{SSID: ssid}
+		settings = CreateConnectionSettings(ap, password)
+	}
+
+	activeConnectionPath, err := ConnectToNetwork(conn, settings, wifiDevicePath, "/")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	WaitForConnection(5)
+
+	// retry mechanism
+	timeout := 5 * time.Second
+	startTime := time.Now()
+	connected := false
+
+	for time.Since(startTime) < timeout {
+		connected, err = CheckConnectionState(conn, activeConnectionPath)
+		if err != nil {
+			// consider logging the error or taking other actions
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		if connected {
+			break // Successfull connection
+		}
+	}
+
+	if connected {
+		fmt.Println("Successfully connected to:", ssid)
+
+		// save password
+		if password != "" {
+			if err := SavePassword(ssid, password); err != nil {
+				fmt.Println("failed to save password:", err)
+			}
+		}
+	} else {
+		fmt.Println("Connection was not established. Wrong password maybe?")
+		os.Exit(1)
+	}
+
 }

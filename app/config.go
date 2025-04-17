@@ -91,7 +91,7 @@ func ForgetNetwork(ssid string) error {
 	}
 
 	if !found {
-		return fmt.Errorf("SSID '%s' not found.", ssid)
+		return fmt.Errorf("SSID '%s' not found as a saved network.", ssid)
 	}
 
 	// save back to file

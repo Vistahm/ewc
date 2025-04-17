@@ -57,7 +57,7 @@ func main() {
 	}
 
 	// Wait
-	app.WaitForConnection(5)
+	app.WaitForConnection(6)
 
 	connected, err := app.CheckConnectionState(conn, activeConnectionPath)
 	if err != nil {

@@ -28,13 +28,17 @@ func CheckConnectionState(conn *dbus.Conn, activeConnectionPath dbus.ObjectPath)
 	if !ok {
 		return false, fmt.Errorf("State is not uint32: %w", err)
 	}
-	fmt.Printf("State: %d\n", state)
 
 	if err != nil {
 		return false, fmt.Errorf("failed to get connection state: %w", err)
 	}
 
-	if state == 1 || state == 2 {
+	// 0: NM_ACTIVE_CONNECTION_STATE_UNKNOWN
+	// 1: NM_ACTIVE_CONNECTION_STATE_ACTIVATING
+	// 2: NM_ACTIVE_CONNECTION_STATE_ACTIVATED
+	// 3: NM_ACTIVE_CONNECTION_STATE_DEACTIVATING
+	// 4: NM_ACTIVE_CONNECTION_STATE_DEACTIVATED
+	if state == 2 {
 		return true, nil
 	}
 

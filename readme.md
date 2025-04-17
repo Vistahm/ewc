@@ -15,7 +15,7 @@ Connecting and forgetting:
 
 ![001](https://github.com/user-attachments/assets/fbbbc235-333e-4aba-9e47-50f48b8db108)
 
-Turning wifi on/off:
+Turning Wi-Fi on/off:
 
 ![002](https://github.com/user-attachments/assets/d7741139-8daf-42c9-970e-18ff198dca96)
 
@@ -24,6 +24,8 @@ Turning wifi on/off:
 - **Connect and Switch between Wi-Fi networks:** easily connect the available Wi-Fi networks with a simple and interactive interface
 - **Save Passwords:** The program is able to save the passwords of each access point so you don't have to re-enter them every time.
 - **Forget Networks:** Remove saved networks if you want to try another password.
+- **Direct connection without scanning:** You can use direct connection to connect to a SSID that you already know.
+- **Disable/Enable Wi-Fi:** Switch the Wi-Fi on/off with less typing!
 - **User-Friendly Interface:** Built with `huh?` library, providing an intuitive and visually appealing user experience.
 - **Fast and Lightweight:** It is fast enough to not waste your time; if you don't believe you can give it a shot!
 
@@ -64,7 +66,7 @@ This project requires the following Go libraries:
 - [huh?](https://github.com/charmbracelet/huh) - For the user interface.
 - [godbus/dbus](https://github.com/godbus/dbus) - For D-Bus communication.
 
-When you build the project, Go will automatically download and install these dependencies for you.
+When you build the project, [Go](https://go.dev/) will automatically download and install these dependencies for you.
 
 ## Contributing
 This program is still under some development. There can be found some potentially bugs. If you encounter any problem feel free to open an issue under this repository.
