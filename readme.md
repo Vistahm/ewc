@@ -15,6 +15,11 @@ Connecting and forgetting:
 
 ![001](https://github.com/user-attachments/assets/fbbbc235-333e-4aba-9e47-50f48b8db108)
 
+## Direct connection without scanning:
+
+![001](https://github.com/user-attachments/assets/c669752d-191e-4c9d-8d31-d1b425dead4f)
+
+
 Turning Wi-Fi on/off:
 
 ![002](https://github.com/user-attachments/assets/d7741139-8daf-42c9-970e-18ff198dca96)
