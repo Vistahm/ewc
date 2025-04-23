@@ -69,6 +69,6 @@ This project requires the following Go libraries:
 When you build the project, [Go](https://go.dev/) will automatically download and install these dependencies for you.
 
 ## Contributing
-This program is still under some development. There can be found some potentially bugs. If you encounter any problem feel free to open an issue under this repository.
+This program is still under development. Bugs can appear. If you encounter any problem feel free to open an issue under this repository.
 
 Any contributions are welcome!

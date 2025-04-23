@@ -22,7 +22,7 @@ func ShowHelpMessage() {
 	fmt.Println("Usage: ewc | ewc [Option]")
 	fmt.Println("Options:")
 	fmt.Println(" con <SSID>:  directly connects to SSID without scanning")
-	fmt.Println(" forget <SSID>:  forgets the provided SSID")
+	fmt.Println(" forget <SSID>:  forgets the SSID")
 	fmt.Println(" on:  turns on the wifi")
 	fmt.Println(" off:  turns off the wifi")
 	fmt.Println(" help:  shows this message")
@@ -68,7 +68,7 @@ func HandleArguments(args []string) {
 			}
 
 			ssidToConnect := args[1]
-			ConnectToSSID(ssidToConnect)
+			DirectConnection(ssidToConnect)
 			os.Exit(0)
 
 		case "forget":

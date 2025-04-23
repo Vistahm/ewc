@@ -156,13 +156,15 @@ func CreateConnectionSettings(ap AccessPoint, password string) map[string]map[st
 	return settings
 }
 
-func ConnectToSSID(ssid string) {
+// Directly connects to ssid without scanning
+func DirectConnection(ssid string) {
 	// print the hint
 	fmt.Println(Yellow+"   You're using direct connection and the program doesn't scan your nearby networks.", "\n",
 		"   So you should be aware of the SSID that you're trying to connect to."+Reset+"\n")
 
+	// Create a new dbus object
 	conn, err := dbus.SystemBus()
-	HandleError(err, "SystemBus failed (ConnectToSSID)")
+	HandleError(err, "SystemBus failed (DirectConnection)")
 
 	wifiDevicePath, err := GetWifiDevicePath(conn)
 	if err != nil {
@@ -201,7 +203,7 @@ func ConnectToSSID(ssid string) {
 
 	WaitForConnection(5)
 
-	// retry mechanism
+	// checking the connection state repeatedly for a certain duration
 	timeout := 5 * time.Second
 	startTime := time.Now()
 	connected := false
