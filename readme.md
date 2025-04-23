@@ -2,11 +2,11 @@
 
 Perhaps we all agree that connecting or switching wifi network in Linux can be a pain. (if you're a terminal dude!)
 
-Recently I became really frustrated with all this `nmcli` thing and I decided to build something that I can use more easily to switch access points and turn the wifi on or off.
+Recently I became really frustrated with `nmcli` and its over-complicated process. So I decided to build something that I can use more easily to switch access points and turn the wifi on or off.
 
 I don't know if there's already such a program that can help you to do so, I didn't research and honestly I don't care! I wanted to build it myself and also have some fun.
 
-So here it is! A program that helps you to control you wireless connection on your Linux machine.
+So here it is! A program that helps you to control you wireless connection on your Linux machine. Most important goal of this project was to be genuinely easy to use.
 
 It looks cool (uses `huh?` library from [charmbracelet](https://github.com/charmbracelet)), it's easy to use and it is fast enough.
 
@@ -14,6 +14,11 @@ It looks cool (uses `huh?` library from [charmbracelet](https://github.com/charm
 Connecting and forgetting:
 
 ![001](https://github.com/user-attachments/assets/fbbbc235-333e-4aba-9e47-50f48b8db108)
+
+Direct connection:
+
+![002](https://github.com/user-attachments/assets/ac2e2aae-55ff-479a-946d-398aefdbbe2a)
+
 
 Turning Wi-Fi on/off:
 
@@ -39,7 +44,7 @@ cd ewc
 ```
 
 2. **Build the program:**
- (Make sure you have Go installed) Run:
+ (Make sure you have [Go](https://go.dev/) installed) Run:
 ```
 go build -o ewc *.go
 ```
@@ -70,5 +75,6 @@ When you build the project, [Go](https://go.dev/) will automatically download an
 
 ## Contributing
 This program is still under development. Bugs can appear. If you encounter any problem feel free to open an issue under this repository.
+Also if you have any suggestions to improve the app you can send me a meesage in Telegram (ID exists in bio) or Reddit by u/vistahm.
 
 Any contributions are welcome!
