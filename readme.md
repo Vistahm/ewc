@@ -2,7 +2,7 @@
 
 Perhaps we all agree that connecting or switching wifi network in Linux can be a pain. (if you're a terminal dude!)
 
-Recently I became really frustrated with `nmcli` and its over-complicated process. So I decided to build something that I can use more easily to switch access points and turn the wifi on or off.
+Recently I became really frustrated with `nmcli` and its over-complicated process. So I decided to build something that I can use more easily to switch access points.
 
 I don't know if there's already such a program that can help you to do so, I didn't research and honestly I don't care! I wanted to build it myself and also have some fun.
 
