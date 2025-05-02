@@ -8,7 +8,7 @@ I don't know if there's already such a program that can help you to do so, I did
 
 So here it is! A program that helps you to control you wireless connection on your Linux machine. Most important goal of this project was to be genuinely easy to use.
 
-It looks cool (uses `huh?` library from [charmbracelet](https://github.com/charmbracelet)), it's easy to use and it is fast enough.
+It looks cool (uses `huh?` library from [charmbracelet](https://github.com/charmbracelet)), it's easy to use and fast enough.
 
 ## Examples
 Connecting and forgetting:
@@ -52,7 +52,7 @@ go build -o ewc *.go
 3. **Run the program:**
  `./ewc`
 
- You can also move the executable file to your `/usr/local/bin` directory to use it globally on you machine.
+ You can also move the executable file to your `/usr/local/bin` directory to use it globally on your machine.
 ```
 mv ./ewc /usr/local/bin
 ```
