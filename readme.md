@@ -75,6 +75,5 @@ When you build the project, [Go](https://go.dev/) will automatically download an
 
 ## Contributing
 This program is still under development. Bugs can appear. If you encounter any problem feel free to open an issue under this repository.
-Also if you have any suggestions to improve the app you can send me a meesage in Telegram (ID exists in bio) or Reddit by u/vistahm.
 
 Any contributions are welcome!
