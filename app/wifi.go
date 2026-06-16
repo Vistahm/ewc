@@ -231,7 +231,7 @@ func DirectConnection(ssid string) {
 			}
 		}
 	} else {
-		fmt.Println("Connection was not established. Wrong password maybe?")
+		fmt.Println("Connection was not established. Check your connectivity and the password.")
 		os.Exit(1)
 	}
 

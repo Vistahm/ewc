@@ -107,7 +107,7 @@ func HandleArguments(args []string) {
 
 		default:
 			fmt.Println("Unknown command. Use 'help' for a list of commands.")
-			os.Exit(0)
+			os.Exit(1)
 		}
 	}
 }
