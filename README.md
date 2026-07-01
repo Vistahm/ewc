@@ -35,7 +35,7 @@ Turning Wi-Fi on/off:
 - **Fast and Lightweight:** It is fast enough to not waste your time; if you don't believe you can give it a shot!
 
 ## Installation
-You can download the latest binary release from [here](https://github.com/Vistahm/ewc/releases). (recommended)
+You can download the latest binary (for x86_64) release from [here](https://github.com/Vistahm/ewc/releases). (recommended)
 
 Or use one of the methods below.
 ### Manual
